@@ -44,6 +44,15 @@ impl BoardState {
         moves
     }
 
+    pub fn empty_cell_count(&self) -> usize {
+        self.state
+            .iter()
+            .flatten()
+            .filter(|&&c| c == ' ')
+            .collect::<Vec<&char>>()
+            .len()
+    }
+
     fn check(state: &Vec<Vec<char>>, player: char) -> Option<char> {
         let by_row = state
             .iter()
@@ -52,8 +61,8 @@ impl BoardState {
             return Some(player);
         }
 
-        let mut by_col = true;
         for col in 0..state.len() {
+            let mut by_col = true;
             for row in 0..state.len() {
                 if state[row][col] != player {
                     by_col = false;
@@ -90,7 +99,7 @@ impl BoardState {
 
         // Check if draw
         if state.iter().flatten().all(|&cell| cell != ' ') {
-            return Some(' ');
+            return Some('-');
         }
 
         None
