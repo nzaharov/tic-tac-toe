@@ -8,25 +8,38 @@ use std::{
 };
 
 fn main() -> io::Result<()> {
-    let mut buffer: String;
+    let mut buffer = String::new();
+    println!("Go first? [Y/n] ");
+    io::stdin().read_line(&mut buffer)?;
+    let mut first_skip = match &buffer[..] {
+        "\n" => false,
+        "y\n" => false,
+        "Y\n" => false,
+        _ => true,
+    };
+
     let mut board = BoardState::new();
-
     while board.winner.is_none() {
-        println!("{}\nYour turn", board);
+        if !first_skip {
+            println!("{}\nYour turn", board);
 
-        buffer = String::new();
-        io::stdin().read_line(&mut buffer)?;
-        let player_move = parse_input(&buffer);
+            buffer = String::new();
+            io::stdin().read_line(&mut buffer)?;
+            let player_move = parse_input(&buffer);
 
-        board = board.make_move(player_move);
-        if board.winner.is_some() {
-            break;
+            board = board.make_move(player_move);
+            if board.winner.is_some() {
+                break;
+            }
         }
 
         println!("{}\nOpponent turn", board);
 
         let pc_move = determine_move(&board);
+        println!("[{},{}]", pc_move.0, pc_move.1);
         board = board.make_move(pc_move);
+
+        first_skip = false;
     }
 
     println!("{}\nWinner is: {}", board, board.winner.unwrap());
