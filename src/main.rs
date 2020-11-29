@@ -19,7 +19,7 @@ fn main() -> io::Result<()> {
     };
 
     let mut board = BoardState::new();
-    while board.winner.is_none() {
+    loop {
         if !first_skip {
             println!("{}\nYour turn", board);
 
@@ -38,6 +38,9 @@ fn main() -> io::Result<()> {
         let pc_move = determine_move(&board);
         println!("[{},{}]", pc_move.0, pc_move.1);
         board = board.make_move(pc_move);
+        if board.winner.is_some() {
+            break;
+        }
 
         first_skip = false;
     }
