@@ -54,7 +54,7 @@ fn determine_move(board: &BoardState) -> (usize, usize) {
 
     for position in moves {
         let curr_board = board.make_move(position);
-        let move_score = minimax(&curr_board, false);
+        let move_score = alpha_beta(&curr_board, NEG_INFINITY, INFINITY, false);
         if move_score > best_score {
             best_score = move_score;
             best_move = Some(position);
@@ -64,7 +64,7 @@ fn determine_move(board: &BoardState) -> (usize, usize) {
     best_move.unwrap()
 }
 
-fn minimax(state: &BoardState, is_maximizing: bool) -> f32 {
+fn alpha_beta(state: &BoardState, alpha: f32, beta: f32, is_maximizing: bool) -> f32 {
     if state.winner.is_some() {
         let empty_cells = state.empty_cell_count() as f32;
         let coef: f32 = match state.winner.unwrap() {
@@ -83,13 +83,21 @@ fn minimax(state: &BoardState, is_maximizing: bool) -> f32 {
         best_score = NEG_INFINITY;
         for position in moves {
             let new_state = state.make_move(position);
-            best_score = best_score.max(minimax(&new_state, false));
+            best_score = best_score.max(alpha_beta(&new_state, alpha, beta, false));
+            let alpha = alpha.max(best_score);
+            if alpha >= beta {
+                break;
+            }
         }
     } else {
         best_score = INFINITY;
         for position in moves {
             let new_state = state.make_move(position);
-            best_score = best_score.min(minimax(&new_state, true));
+            best_score = best_score.min(alpha_beta(&new_state, alpha, beta, true));
+            let beta = beta.min(best_score);
+            if alpha >= beta {
+                break;
+            }
         }
     }
 
