@@ -54,13 +54,19 @@ fn determine_move(board: &BoardState) -> (usize, usize) {
     let moves = board.get_possible_moves();
     let mut best_move: Option<(usize, usize)> = None;
     let mut best_score = NEG_INFINITY;
+    let alpha = NEG_INFINITY;
+    let beta = INFINITY;
 
     for position in moves {
         let curr_board = board.make_move(position);
-        let move_score = alpha_beta(&curr_board, NEG_INFINITY, INFINITY, false);
+        let move_score = alpha_beta(&curr_board, alpha, beta, false);
         if move_score > best_score {
             best_score = move_score;
             best_move = Some(position);
+            let alpha = alpha.max(best_score);
+            if alpha >= beta {
+                break;
+            }
         }
     }
 
