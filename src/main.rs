@@ -18,11 +18,18 @@ fn main() -> io::Result<()> {
         board = board.make_move(player_move);
 
         println!("{}\nOpponent turn", board);
+
+        let pc_move = find_move(&board);
+        board = board.make_move(pc_move);
     }
 
-    println!("Winner is: {}", board.winner.unwrap());
+    println!("{}\nWinner is: {}", board, board.winner.unwrap());
 
     Ok(())
+}
+
+fn find_move(board: &BoardState) -> (usize, usize) {
+    todo!()
 }
 
 fn extract_digit(string: &String, pos: usize) -> u32 {
